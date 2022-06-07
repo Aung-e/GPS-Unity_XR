@@ -2,14 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GPS : MonoBehaviour
 {
     public float latitude;
     public float longitude;
     public TMP_Text outputText;
+    public Text lat1Text;
+    public Text lat2Text;
+    public Text long1Text;
+    public Text long2Text;
+    public Text compareOutputText;
     int requests =0;
     int GPSRequests =0;
+    float[] coordArr = {0, 0, 0, 0};
 
     public void Start(){
         StartCoroutine(StartLocationService());
@@ -26,6 +33,30 @@ public class GPS : MonoBehaviour
         var c = 2 * Mathf.Atan2(Mathf.Sqrt(a), Mathf.Sqrt(1-a));
         var d = R * c;
         return d * 1000; // meters
+    }
+
+    public void SetArray()
+    {
+        coordArr[0] = coordArr[2];
+        coordArr[1] = coordArr[3];
+        coordArr[2] = Input.location.lastData.latitude;
+        coordArr[3] = Input.location.lastData.longitude;
+
+        lat1Text.text = coordArr[0].ToString();
+        long1Text.text = coordArr[1].ToString();
+        lat2Text.text = coordArr[2].ToString();
+        long2Text.text = coordArr[3].ToString();
+
+        
+
+    }
+
+    public void CoordCompare()
+    {
+        
+        
+        compareOutputText.text = measure(coordArr[0], coordArr[1], coordArr[2], coordArr[3]).ToString();
+
     }
 
     private void Update(){
