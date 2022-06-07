@@ -9,6 +9,7 @@ public class GPS : MonoBehaviour
     public float longitude;
     public TMP_Text outputText;
     int requests =0;
+    int GPSRequests =0;
 
     public void Start(){
         StartCoroutine(StartLocationService());
@@ -27,15 +28,27 @@ public class GPS : MonoBehaviour
         return d * 1000; // meters
     }
 
+    private void Update(){
+        latitude = Input.location.lastData.latitude;
+
+        longitude = Input.location.lastData.longitude;
+
+        outputText.text = Input.location.status +  "   "  + "lat "  +latitude + "\n long" + longitude +  "\n GPS Requests" + requests;  
+        Debug.Log("Latitude: " + latitude + " Longitude: " + longitude);
+
+    }
+
     private IEnumerator StartLocationService(){
+
+        requests +=1;
+
         if(!Input.location.isEnabledByUser){
             Debug.Log("User does not have GPS");
-             outputText.text ="This app requires GPS location data " + requests;
-             requests +=1;
+            outputText.text ="This app requires GPS location data " + requests;
             yield break;
         }
 
-        Input.location.Start();
+        Input.location.Start(500f,1f);
 
         int maxWait = 20;
 
@@ -47,14 +60,11 @@ public class GPS : MonoBehaviour
         if(maxWait <=0 ){
             outputText.text = "Timed out";
             Debug.Log("Timed Out");
+            yield break;
         }
         
-        latitude = Input.location.lastData.latitude;
-
-        longitude = Input.location.lastData.longitude;
-        outputText.text = "lat "+latitude + "\n long" + longitude;  
-        Debug.Log("Latitude: " + latitude + " Longitude: " + longitude);
-        yield break;
-
+        //Input.location.Stop();
+        //yield break;
+        
     }
 }
